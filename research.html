@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Research — Jeongwon Choi</title>
+  <meta name="description" content="Publications and conference presentations by Jeongwon Choi.">
+  <link rel="stylesheet" href="css/style.css?v=4">
+  <script src="js/theme.js"></script>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a class="site-name" href="index.html">Jeongwon Choi</a>
+    <nav>
+      <a href="index.html">About</a>
+      <a href="research.html" class="active">Research</a>
+      <a href="experience.html">Experience</a>
+      <a href="teaching.html">Teaching</a>
+    </nav>
+    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle color theme">☾</button>
+  </div>
+</header>
+
+<main>
+  <h1>Research</h1>
+
+  <h2>Featured Research</h2>
+  <div class="research-grid">
+    <div class="research-card">
+      <img src="images/research/csm-map.png" alt="Construct semantic map showing well-covered regions and gaps of a scale">
+      <div class="card-body">
+        <h3>Construct Semantic Maps (Dissertation)</h3>
+        <p>Combines large language model item embeddings with network psychometrics to map
+        the semantic space of a psychological construct. The map reveals which regions of
+        the construct a scale covers well, where items are redundant, and where gaps
+        (unmeasured regions) remain.</p>
+        <span class="status">Dissertation in progress</span>
+      </div>
+    </div>
+    <div class="research-card">
+      <img src="images/research/sbm-community.png" alt="Community detection accuracy across sample sizes and network estimation methods">
+      <div class="card-body">
+        <h3>Network Accuracy Across Levels of Analysis</h3>
+        <p>A large-scale simulation using stochastic block models to evaluate how accurately
+        estimated psychometric networks recover local (edges, centrality), mesoscale
+        (communities), and global structures. The results show where common estimation
+        methods succeed and break down across data types and sample sizes.</p>
+        <span class="status">Psychological Methods (2026, online first) · <a href="https://psycnet.apa.org/record/2027-99505-001" target="_blank" rel="noopener">Article</a></span>
+      </div>
+    </div>
+    <div class="research-card">
+      <img src="images/research/adaptive-reg.png" alt="Sensitivity and specificity of edge recovery across regularization methods">
+      <div class="card-body">
+        <h3>Data-Adaptive Regularization for Psychometric Networks</h3>
+        <p>New adaptive penalties based on extreme value distributions that calibrate
+        regularization to the empirical partial correlation distribution of the data,
+        maintaining high specificity without sacrificing sensitivity. This addresses
+        well-known limitations of the field-standard EBICglasso.</p>
+        <span class="status">Psychometrika (accepted for special issue) · <a href="https://osf.io/preprints/psyarxiv/qvxdy_v1" target="_blank" rel="noopener">Preprint on OSF</a></span>
+      </div>
+    </div>
+    <div class="research-card">
+      <img src="images/research/cart-tree.png" alt="Decision tree recommending correction strategies based on observed data features">
+      <div class="card-body">
+        <h3>Classification Trees for Method Selection</h3>
+        <p>Uses classification trees on Monte Carlo simulation results to turn complex
+        simulation findings into interpretable, practical decision rules. Researchers can
+        choose a method based on features they can actually observe in their data rather
+        than unknown population parameters.</p>
+        <span class="status">Under review · <a href="https://osf.io/preprints/psyarxiv/kr2vu" target="_blank" rel="noopener">Preprint on OSF</a></span>
+      </div>
+    </div>
+    <div class="research-card">
+      <img src="images/research/jbds-signflip.png" alt="Example of a sign flip in tetrachoric correlation estimation: a zero cell flips the estimate from 0.3 to -1, and correction recovers the sign">
+      <div class="card-body">
+        <h3>Zero-Frequency Cell Corrections in Tetrachoric Correlation</h3>
+        <p>When binary data are sparse, a single empty cell can flip the estimated
+        correlation to ±1, the opposite sign of the truth. This work comprehensively
+        evaluates correction strategies for tetrachoric correlation estimation, extending
+        findings to multivariate settings with practical recommendations.</p>
+        <span class="status"><a href="https://jbds.isdsa.org/jbds/article/view/163" target="_blank" rel="noopener">Journal of Behavioral Data Science (2026)</a> · <a href="https://www.tandfonline.com/doi/full/10.1080/00273171.2024.2442249" target="_blank" rel="noopener">Multivariate Behavioral Research (2025)</a></span>
+      </div>
+    </div>
+    <div class="research-card">
+      <img src="images/research/glmm-tree.png" alt="GLMM-tree diagram showing cognitive aging subgroups by education, race, and income">
+      <div class="card-body">
+        <h3>GLMM-Trees for Heterogeneous Cognitive Aging</h3>
+        <p>A practical guide to combining mixed-effects models with decision trees to
+        identify subgroups with distinct longitudinal trajectories. Applied to national
+        aging data, it shows how education, race, and income jointly shape cognitive aging
+        from an intersectional perspective.</p>
+        <span class="status">Frontiers in Psychology (2026) · <a href="https://www.frontiersin.org/journals/psychology/articles/10.3389/fpsyg.2026.1738928/full" target="_blank" rel="noopener">Article</a></span>
+      </div>
+    </div>
+  </div>
+
+  <h2>Peer-Reviewed Publications</h2>
+  <ul class="entries">
+    <li>Christensen, A. P.<sup>†</sup>, &amp; <span class="me">Choi, J.</span><sup>†</sup> (2026). Network accuracy across levels of analysis using stochastic block models. <span class="venue">Psychological Methods</span>. Online first. <span class="role-line"><sup>†</sup>Equal contribution.</span></li>
+    <li><span class="me">Choi, J.</span>, Homer, B., &amp; Kim, S. (2026). Intersectional approaches to cognitive aging: A practical guide to modeling heterogeneous trajectories with GLMM-trees. <span class="venue">Frontiers in Psychology, 17</span>, 1738928.</li>
+    <li><span class="me">Choi, J.</span>, &amp; Wu, H. (2026). Zero-frequency cell correction strategies in tetrachoric correlation estimation: Expanded strategies and multivariate implications. <span class="venue">Journal of Behavioral Data Science, 6</span>(1), 1–40.</li>
+    <li>Oh, S., Kang, I. S., Kim, H. N., Park, J. S., Byeon, H. J., Lee, J., Jeong, I. O., Cho, S., Chae, H. N., <span class="me">Choi, J.</span>, &amp; Ha, E. K. (2025). Development of a program to support minimum achievement levels in high school mathematics elective courses under Korea's credit-based high school system [고교학점제 수학 선택과목의 최소 성취수준 보장지도 프로그램 개발]. <span class="venue">Communications of Mathematical Education [수학교육 논문집], 39</span>(4), 729–763.</li>
+    <li>Oh, S., <span class="me">Choi, J.</span>, &amp; Lee, J. (2025). Analyzing the implementation of minimum achievement level assurance guidance in high school mathematics under the high school credit system [고교학점제 도입에 따른 고등학교 수학 교과 최소 성취수준 보장지도 운영 사례 분석]. <span class="venue">Journal of Educational Research in Mathematics [수학교육학연구], 35</span>(4), 1109–1138.</li>
+    <li><span class="me">Choi, J.</span>, &amp; Wu, H. (2025). On zero-count correction strategies in tetrachoric correlation estimation. <span class="venue">Multivariate Behavioral Research, 60</span>(1), 3–4.</li>
+    <li><span class="me">Choi, J.</span>, &amp; Hong, S. (2022). The impact of imposing equality constraints on residual variances across classes in regression mixture models. <span class="venue">Frontiers in Psychology, 12</span>, 736132.</li>
+    <li>Lee, J., &amp; <span class="me">Choi, J.</span> (2021). A study on the level of use on the alignment with curriculum-instruction-evaluation-record and self-evaluation of secondary school teachers [중등교사들의 교육과정-수업-평가-기록 일체화 실행수준 점검 및 자기평가 분석]. <span class="venue">Journal of Learner-Centered Curriculum and Instruction [학습자중심교과교육연구], 21</span>(10), 167–187.</li>
+    <li><span class="me">Choi, J.</span>, &amp; Lee, J. (2020). An analysis of middle and high school teachers' stages of concern in integration of curriculum-instruction-evaluation-records [교육과정-수업-평가-기록 일체화에 대한 중고등학교 교사의 관심수준 분석]. <span class="venue">Journal of Learner-Centered Curriculum and Instruction [학습자중심교과교육연구], 20</span>(20), 439–457.</li>
+    <li><span class="me">Choi, J.</span>, Oh, H., &amp; Hong, S. (2020). The mediating effect between self-efficacy, happiness, and job satisfaction of wage workers with disabilities and the moderated mediating effect of work disruption due to disability [장애인 임금근로자의 자기효능감, 행복, 직무만족도 사이의 매개효과와 장애로 인한 업무 지장의 조절된 매개효과]. <span class="venue">Korean Journal of Vocational Rehabilitation [직업재활연구], 30</span>(2), 209–228.</li>
+    <li><span class="me">Choi, J.</span>, Jeon, H., Oh, H., &amp; Hong, S. (2020). A study on the relationship between smartphone usage types and smartphone dependency of elementary school students — Focusing on contact and SNS use [초등학생의 스마트폰 사용 유형화 및 스마트폰 의존도와의 관계 분석: 연락 및 SNS 사용을 중심으로]. <span class="venue">Korean Journal of Youth Studies [청소년학연구], 27</span>(5), 331–354.</li>
+    <li><span class="me">Choi, J.</span>, Jeon, H., &amp; Hong, S. (2020). An analysis of structural relationship between smartphone addiction and school adjustment among vulnerable adolescents: Using serial mediators of aggressiveness and ego-resiliency [취약계층 청소년의 스마트폰 중독과 학교적응 간 관계에서 공격성, 자아탄력성의 순차적 매개효과 검증]. <span class="venue">Korean Journal of Youth Studies [청소년학연구], 27</span>(2), 1–26.</li>
+    <li>Jeon, H., Lee, C., <span class="me">Choi, J.</span>, &amp; Hong, S. (2019). Job expectation trajectories of the elderly and their relationships with participation in social activities and personal factors [성장혼합모형을 적용한 미취업 장년층의 일자리 기대감 변화 유형화 및 영향요인 검증: 사회활동을 중심으로]. <span class="venue">Korean Quarterly Journal of Labor Policy [노동정책연구], 19</span>(4), 97–126.</li>
+  </ul>
+
+  <h2>Manuscripts Under Review &amp; In Preparation</h2>
+  <ul class="entries">
+    <li><span class="me">Choi, J.</span>, &amp; Wu, H. (under review). Using classification trees to identify the best method in Monte Carlo simulations: From population parameters to observed features.</li>
+    <li>Christensen, A. P., &amp; <span class="me">Choi, J.</span> (in preparation). Adaptive regularization via extreme value distributions for Gaussian graphical models. <span class="venue">Psychometrika</span>. <span class="tag">Accepted for special issue</span></li>
+    <li>Garrido, L. E., Ortiz, L., Cordero, T., Nieto-Cañaveras, M. D., <span class="me">Choi, J.</span>, &amp; Christensen, A. P. (in preparation). Benchmarking large language model embeddings for generative psychometrics. <span class="venue">Psychometrika</span>. <span class="tag">Accepted for special issue</span></li>
+    <li>Scale validation for an early at-home writing scale (in preparation), with Alexander Christensen, Sophia Vinci-Booher, and Elton Cross.</li>
+    <li><span class="me">Choi, J.</span> (dissertation, in preparation). Construct semantic maps using item embeddings and network psychometrics.</li>
+  </ul>
+
+  <h2>Conference Presentations</h2>
+  <h3>2026</h3>
+  <ul class="entries">
+    <li><span class="me">Choi, J.</span>, &amp; Wu, H. Classification trees for method selection in tetrachoric correlation estimation. <span class="venue">International Meeting of the Psychometric Society</span>, Seoul, Korea.</li>
+    <li><span class="me">Choi, J.</span>, &amp; Christensen, A. P. Data-adaptive regularization for true edges in psychometric networks. <span class="venue">APA Annual Convention</span>, Washington, DC. <span class="tag">Poster</span></li>
+    <li><span class="me">Choi, J.</span>, &amp; Wu, H. Using classification trees for method selection from observed features in simulation. <span class="venue">NCME Annual Meeting</span>, Los Angeles, CA.</li>
+  </ul>
+  <h3>2024</h3>
+  <ul class="entries">
+    <li><span class="me">Choi, J.</span>, &amp; Wu, H. Comprehensive examination of zero-frequency cell correction strategies in tetrachoric correlation estimation. <span class="venue">SMEP Annual Meeting</span>, Ithaca, NY. <span class="tag">Poster</span></li>
+    <li><span class="me">Choi, J.</span>, &amp; Christensen, A. P. Do (non-)regularized partial correlation networks generalize? Re-evaluation of network generalizability. <span class="venue">International Meeting of the Psychometric Society</span>, Prague, Czech Republic. <span class="tag">Poster</span></li>
+    <li><span class="me">Choi, J.</span>, &amp; Wu, H. Impact of zero-cell correction strategies on the estimation of tetrachoric correlation matrices. <span class="venue">NCME Annual Meeting</span>, Philadelphia, PA.</li>
+  </ul>
+  <h3>2023</h3>
+  <ul class="entries">
+    <li><span class="me">Choi, J.</span>, &amp; Wu, H. Examining different approaches to treating zero-frequency cells in tetrachoric correlation estimation. <span class="venue">International Meeting of the Psychometric Society</span>, College Park, MD.</li>
+    <li><span class="me">Choi, J.</span>, &amp; Wu, H. Examining different approaches to treating zero-frequency cells in polychoric correlation estimation. <span class="venue">Modern Modeling Methods Conference</span>, Storrs, CT. <span class="tag">Poster</span></li>
+  </ul>
+  <h3>2018–2019</h3>
+  <ul class="entries">
+    <li>Lee, S., &amp; <span class="me">Choi, J.</span> (2019). Latent profile analysis of types of subjective difficulties in terms of determining the career path of drop-out adolescents. <span class="venue">Korean Society of Psychological Measurement and Assessment Fall Conference</span>, Seoul, Korea. <span class="tag">Poster</span></li>
+    <li>Oh, H., &amp; <span class="me">Choi, J.</span> (2019). Latent transition analysis of stress levels among student financial aid recipients and its correspondence with job quality. <span class="venue">Korean Educational Research Association Annual Conference</span>, Seoul, Korea.</li>
+    <li><span class="me">Choi, J.</span>, Lee, C., &amp; Jeon, H. (2019). Latent class analysis of types of school career education experiences and further explorations of their relationships with career maturity. <span class="venue">Korean Society of Psychological Measurement and Assessment Spring Conference</span>, Seoul, Korea. <span class="tag">Poster</span></li>
+    <li>Jeon, H., Lee, C., &amp; <span class="me">Choi, J.</span> (2019). Job expectation trajectories of the elderly and their relationships with social activity participation and personal factors. <span class="venue">Conference of Employment Panel Survey</span>, Seoul, Korea.</li>
+    <li>Jeon, H., &amp; <span class="me">Choi, J.</span> (2018). Meticulous analysis of the effects of smartphone dependence, with focus on happiness index, sociability, and delinquency among adolescents. <span class="venue">Korean Association for Survey Research Fall Conference</span>, Seoul, Korea.</li>
+  </ul>
+
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <span>© 2026 Jeongwon Choi</span>
+  </div>
+</footer>
+
+</body>
+</html>
