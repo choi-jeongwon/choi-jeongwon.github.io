@@ -224,6 +224,51 @@ ul.entries li::before {
   background: var(--accent);
 }
 
+/* ===== Hero (About) ===== */
+.hero {
+  position: relative;
+  overflow: hidden;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-alt);
+}
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.32;
+  pointer-events: none;
+}
+.hero-inner {
+  position: relative;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 3rem 1.25rem 2.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+.hero-text { flex: 1 1 24rem; }
+.hero-text h1 { font-size: 2.3rem; }
+.hero .subtitle { margin-bottom: 0; }
+.hero .contact-links { margin-top: 1.1rem; }
+.see-all { margin-top: 0.9rem; font-size: 0.95rem; }
+@media (max-width: 640px) {
+  .hero-inner { flex-direction: column-reverse; align-items: flex-start; padding-top: 2rem; }
+}
+.hn-dot  { fill: var(--text-muted); opacity: 0.28; }
+.hn-edge { stroke: var(--text-muted); stroke-width: 1.1; opacity: 0.45; }
+.hn-bridge { stroke-dasharray: 4 4; opacity: 0.35; }
+.hn-node { opacity: 0.92; }
+.hn-a { fill: #7b9cc4; }
+.hn-b { fill: var(--accent); }
+.hn-c { fill: #85ab8d; }
+.hn-map  { fill: none; stroke: var(--accent); stroke-width: 1.3; stroke-dasharray: 6 5; opacity: 0.7; }
+.hn-star { fill: var(--text); opacity: 0.75; }
+.hn-flow { fill: none; stroke: var(--text-muted); stroke-width: 1; stroke-dasharray: 2 4; opacity: 0.55; }
+
 /* ===== Featured research cards ===== */
 .research-grid {
   display: grid;
