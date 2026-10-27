@@ -1,0 +1,512 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+</head>
+<body>
+<title>Exponential Family Explorer</title>
+
+<!-- Password gate -->
+<div id="gate" style="position: fixed; inset: 0; z-index: 1000; display: grid; place-items: center; background: var(--paper, #fbfbf8);">
+  <form id="gate-form" style="display: grid; gap: 12px; max-width: 320px; width: 90%; text-align: center;">
+    <h1 style="margin: 0; font-size: 1.4rem;">Teaching Tools</h1>
+    <p style="margin: 0; color: var(--muted, #5d636b);">Enter the password to view this tool.</p>
+    <input type="password" id="gate-pw" autocomplete="off" aria-label="Password"
+           style="font: inherit; padding: 8px 10px; border: 1px solid var(--rule, #d9dbd6); border-radius: 6px; background: var(--paper, #fbfbf8); color: var(--ink, #1d2126); text-align: center;">
+    <button type="submit" class="btn">Enter</button>
+    <p id="gate-err" hidden style="margin: 0; color: #b4232a;">Incorrect password.</p>
+    <a href="../teaching.html" style="color: var(--muted, #5d636b); font-size: 0.9rem;">&larr; Back to Teaching</a>
+  </form>
+</div>
+<script>
+(function () {
+  "use strict";
+  var HASH = "524beeec873cb78924f03e60f2b9a7313873df5881f0654eaead2d581336e643";
+  var gate = document.getElementById("gate");
+  try {
+    if (sessionStorage.getItem("tools-unlocked") === "1") { gate.remove(); return; }
+  } catch (e) {}
+  function check(pw) {
+    return crypto.subtle.digest("SHA-256", new TextEncoder().encode(pw)).then(function (buf) {
+      var hex = Array.prototype.map.call(new Uint8Array(buf), function (b) {
+        return b.toString(16).padStart(2, "0");
+      }).join("");
+      return hex === HASH;
+    });
+  }
+  document.getElementById("gate-form").addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    check(document.getElementById("gate-pw").value).then(function (ok) {
+      if (ok) {
+        try { sessionStorage.setItem("tools-unlocked", "1"); } catch (e) {}
+        gate.remove();
+      } else {
+        document.getElementById("gate-err").hidden = false;
+        document.getElementById("gate-pw").select();
+      }
+    });
+  });
+  document.getElementById("gate-pw").focus();
+})();
+</script>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Source+Sans+3:wght@400;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a lecture-notes page with two tabs; each tab is a control strip above a pair of charts and a readout table. */
+:root {
+  --paper: #fbfbf8;
+  --ink: #1d2126;
+  --muted: #5d636b;
+  --rule: #d9dbd6;
+  --grid: #ecede9;
+  --panel: #f2f3ef;
+  --blue: #1f4e8c;
+  --ochre: #a8641b;
+  --focus: #1f4e8c;
+  --font-display: "Source Serif 4", "Iowan Old Style", Georgia, serif;
+  --font-body: "Source Sans 3", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --font-data: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #15181c; --ink: #e6e8ea; --muted: #a2a8b0; --rule: #33383f; --grid: #23272d;
+    --panel: #1c2026; --blue: #7fa9e6; --ochre: #e0a55e; --focus: #7fa9e6; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #15181c; --ink: #e6e8ea; --muted: #a2a8b0; --rule: #33383f; --grid: #23272d;
+  --panel: #1c2026; --blue: #7fa9e6; --ochre: #e0a55e; --focus: #7fa9e6; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body {
+  background: var(--paper); color: var(--ink); font-family: var(--font-body); font-size: 16px; line-height: 1.5;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 20px 40px;
+}
+.wrap { max-width: 1040px; margin: 0 auto; display: grid; gap: 18px; }
+header { display: grid; gap: 4px; border-bottom: 1px solid var(--rule); padding-bottom: 12px; }
+h1 { font-family: var(--font-display); font-weight: 600; font-size: 1.75rem; line-height: 1.2; margin: 0; text-wrap: balance; }
+.sub { color: var(--muted); margin: 0; font-size: 0.95rem; }
+h2 { font-family: var(--font-display); font-weight: 600; font-size: 1.2rem; margin: 0; text-wrap: balance; }
+p { margin: 0; max-width: 68ch; }
+.tabs { display: flex; flex-wrap: wrap; gap: 8px; }
+.tab {
+  font: inherit; font-weight: 600; color: var(--ink); background: transparent; border: 1px solid var(--rule);
+  border-radius: 999px; padding: 6px 16px; cursor: pointer;
+}
+.tab[aria-selected="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+button:focus-visible, input:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+section.panel { display: grid; gap: 14px; }
+.controls { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: center; background: var(--panel); padding: 12px 14px; border-radius: 6px; }
+.seg { display: inline-flex; border: 1px solid var(--rule); border-radius: 6px; overflow: hidden; }
+.seg button { font: inherit; color: var(--ink); background: var(--paper); border: 0; padding: 5px 12px; cursor: pointer; }
+.seg button + button { border-left: 1px solid var(--rule); }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+.slider { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; flex: 1 1 260px; min-width: 0; }
+.slider input { flex: 1 1 140px; }
+.slider label { font-weight: 600; white-space: nowrap; }
+.slider input { flex: 1; min-width: 0; accent-color: var(--blue); }
+.val { font-family: var(--font-data); font-size: 0.92rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.formula { font-family: var(--font-display); font-size: 1.02rem; color: var(--ink); }
+.formula .m { font-style: italic; }
+.charts { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 720px) { .charts { grid-template-columns: 1fr; } }
+figure { margin: 0; display: grid; gap: 4px; min-width: 0; }
+figcaption { font-size: 0.9rem; color: var(--muted); }
+figcaption b { color: var(--ink); font-weight: 600; }
+svg.chart { width: 100%; height: auto; display: block; }
+svg .axis { stroke: var(--ink); stroke-width: 1; fill: none; }
+svg .grid { stroke: var(--grid); stroke-width: 1; fill: none; }
+svg .tick { fill: var(--muted); font-family: var(--font-data); font-size: 11px; }
+svg .alabel { fill: var(--ink); font-family: var(--font-body); font-size: 12.5px; }
+svg .curve { stroke: var(--ink); stroke-width: 2.2; fill: none; }
+svg .area { fill: var(--blue); fill-opacity: 0.14; stroke: none; }
+svg .bar { fill: var(--blue); fill-opacity: 0.22; stroke: var(--blue); stroke-width: 1.2; }
+svg .tangent { stroke: var(--blue); stroke-width: 2; stroke-dasharray: 6 4; fill: none; }
+svg .meanline { stroke: var(--ochre); stroke-width: 2; stroke-dasharray: 5 4; fill: none; }
+svg .dot { fill: var(--blue); stroke: var(--paper); stroke-width: 1.5; }
+svg .note { fill: var(--blue); font-family: var(--font-body); font-size: 12.5px; }
+svg .note2 { fill: var(--ochre); font-family: var(--font-body); font-size: 12.5px; }
+svg .ce { stroke: var(--blue); stroke-width: 2.4; fill: none; }
+svg .se { stroke: var(--ochre); stroke-width: 2.4; stroke-dasharray: 7 4; fill: none; }
+svg .target { stroke: var(--muted); stroke-width: 1; stroke-dasharray: 2 3; fill: none; }
+svg .cursor { stroke: var(--muted); stroke-width: 1; fill: none; }
+table.readout { border-collapse: collapse; font-size: 0.95rem; min-width: 420px; }
+.tablebox { overflow-x: auto; }
+table.readout th, table.readout td { padding: 6px 14px 6px 0; text-align: left; border-bottom: 1px solid var(--rule); }
+table.readout th { font-weight: 600; color: var(--muted); font-size: 0.85rem; letter-spacing: 0.02em; }
+table.readout td.num { font-family: var(--font-data); font-variant-numeric: tabular-nums; }
+.match { color: var(--blue); font-weight: 600; }
+.bars { display: grid; gap: 10px; }
+.brow { display: grid; grid-template-columns: minmax(0, 15rem) 1fr 5.5rem; gap: 10px; align-items: center; }
+@media (max-width: 560px) { .brow { grid-template-columns: 1fr 4.8rem; } .brow .track { grid-column: 1 / -1; grid-row: 2; } }
+.track { height: 14px; background: var(--grid); border-radius: 3px; overflow: hidden; }
+.fill { height: 100%; width: 0; }
+.fill.ce { background: var(--blue); }
+.fill.se { background: var(--ochre); }
+.btn { font: inherit; font-weight: 600; color: var(--paper); background: var(--ink); border: 0; border-radius: 6px; padding: 7px 14px; cursor: pointer; }
+.hint { color: var(--muted); font-size: 0.92rem; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 0.9rem; color: var(--muted); }
+.key { display: inline-block; width: 22px; height: 0; border-top: 2.4px solid var(--blue); vertical-align: middle; margin-right: 6px; }
+.key.se { border-top: 2.4px dashed var(--ochre); }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Exponential Family Explorer</h1>
+    <p class="sub">Companion to the lecture notes <i>Introduction to Probability Distributions using Exponential Family</i>: Section 3 (Tool 1) and Section 5.2 (Tool 2).</p>
+  </header>
+
+  <div class="tabs" role="tablist" aria-label="Tools">
+    <button class="tab" role="tab" id="tab-mean" aria-controls="panel-mean" aria-selected="true">Tool 1 &middot; A&prime;(&eta;) is the mean</button>
+    <button class="tab" role="tab" id="tab-loss" aria-controls="panel-loss" aria-selected="false">Tool 2 &middot; Cross-entropy vs. squared error</button>
+  </div>
+
+  <!-- ===================== Tool 1 ===================== -->
+  <section class="panel" id="panel-mean" role="tabpanel" aria-labelledby="tab-mean">
+    <h2>The slope of A(&eta;) is the mean, and its curvature is the variance</h2>
+    <div class="controls">
+      <div class="seg" role="group" aria-label="Distribution">
+        <button type="button" id="d-bernoulli" data-d="bernoulli" aria-pressed="true">Bernoulli</button>
+        <button type="button" id="d-poisson" data-d="poisson" aria-pressed="false">Poisson</button>
+        <button type="button" id="d-normal" data-d="normal" aria-pressed="false">Normal (&sigma;&sup2; = 1)</button>
+      </div>
+      <div class="slider">
+        <label for="eta">natural parameter &eta;</label>
+        <input type="range" id="eta" min="-4" max="4" step="0.01" value="1">
+        <span class="val" id="eta-val">&eta; = 1.00</span>
+      </div>
+      <span class="val" id="param-val">p = 0.731</span>
+    </div>
+    <p class="formula" id="formula"></p>
+    <div class="charts">
+      <figure>
+        <svg class="chart" id="chart-dist" role="img" aria-label="Probability distribution for the current natural parameter"></svg>
+        <figcaption><b>Distribution f(x | &eta;).</b> The dashed line marks the mean computed from the distribution.</figcaption>
+      </figure>
+      <figure>
+        <svg class="chart" id="chart-A" role="img" aria-label="Log-partition function with tangent line"></svg>
+        <figcaption><b>Log-partition function A(&eta;).</b> The dashed line is the tangent at the current &eta;.</figcaption>
+      </figure>
+    </div>
+    <div class="tablebox">
+      <table class="readout" aria-live="polite">
+        <thead><tr><th></th><th>From A(&eta;)</th><th>From the distribution</th></tr></thead>
+        <tbody>
+          <tr><td>Mean</td><td class="num" id="r-a1"></td><td class="num" id="r-mean"></td></tr>
+          <tr><td>Variance</td><td class="num" id="r-a2"></td><td class="num" id="r-var"></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="hint">Move &eta; and switch distributions. The two columns always agree: this is Proposition 3.1, E[T(X)] = A&prime;(&eta;) and Var(T(X)) = A&Prime;(&eta;).</p>
+  </section>
+
+  <!-- ===================== Tool 2 ===================== -->
+  <section class="panel" id="panel-loss" role="tabpanel" aria-labelledby="tab-loss" hidden>
+    <h2>How strongly does a spam filter correct itself?</h2>
+    <div class="controls">
+      <div class="seg" role="group" aria-label="True answer">
+        <button type="button" id="y-1" data-y="1" aria-pressed="true">Email is spam (y = 1)</button>
+        <button type="button" id="y-0" data-y="0" aria-pressed="false">Not spam (y = 0)</button>
+      </div>
+      <div class="slider">
+        <label for="score">score &eta;</label>
+        <input type="range" id="score" min="-6" max="6" step="0.01" value="-4">
+        <span class="val" id="score-val">&eta; = &minus;4.00</span>
+      </div>
+      <span class="val" id="yhat-val">P(spam) = 0.018</span>
+    </div>
+    <div class="bars" aria-live="polite">
+      <div class="brow"><span>Cross-entropy correction |&ycirc; &minus; y|</span><div class="track"><div class="fill ce" id="bar-ce"></div></div><span class="val" id="v-ce"></span></div>
+      <div class="brow"><span>Squared-error correction |(&ycirc; &minus; y)&thinsp;&ycirc;(1 &minus; &ycirc;)|</span><div class="track"><div class="fill se" id="bar-se"></div></div><span class="val" id="v-se"></span></div>
+    </div>
+    <div class="charts">
+      <figure>
+        <svg class="chart" id="chart-grad" role="img" aria-label="Size of the correction as a function of the score"></svg>
+        <figcaption><b>Size of the correction.</b> The extra factor &ycirc;(1 &minus; &ycirc;) = A&Prime;(&eta;) is a variance, close to 0 when the model is very sure.</figcaption>
+      </figure>
+      <figure>
+        <svg class="chart" id="chart-train" role="img" aria-label="Prediction during 40 steps of gradient descent"></svg>
+        <figcaption><b>Training from the current score.</b> 40 steps of gradient descent with learning rate &alpha; = 1.</figcaption>
+      </figure>
+    </div>
+    <div class="legend"><span><span class="key"></span>cross-entropy</span><span><span class="key se"></span>squared error</span></div>
+    <div class="controls">
+      <button type="button" class="btn" id="train">Train 40 steps</button>
+      <span class="val" id="train-val"></span>
+    </div>
+    <p class="hint">Set the score to about &minus;4 with y = 1: the filter is confidently wrong. Cross-entropy gives a correction close to 1 and learns in a few steps; squared error barely moves.</p>
+  </section>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  var NS = "http://www.w3.org/2000/svg";
+  function el(tag, attrs, parent) {
+    var e = document.createElementNS(NS, tag);
+    for (var k in attrs) { if (Object.prototype.hasOwnProperty.call(attrs, k)) e.setAttribute(k, attrs[k]); }
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+  function sig(x) { return 1 / (1 + Math.exp(-x)); }
+  function softplus(x) { return x > 30 ? x : Math.log1p(Math.exp(x)); }
+  function f(x, d) { return (Math.round(x * Math.pow(10, d)) / Math.pow(10, d)).toFixed(d).replace("-", "−"); }
+  function tickText(v) { var s = Math.abs(v) < 1e-9 ? "0" : String(Math.round(v * 100) / 100); return s.replace("-", "−"); }
+
+  /* A small chart frame: axes, grid, ticks, labels, and a clipped plot group. */
+  var clipId = 0;
+  function frame(svg, o) {
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+    var W = 480, H = 300, m = { l: 50, r: 14, t: 16, b: 44 };
+    svg.setAttribute("viewBox", "0 0 " + W + " " + H);
+    var sx = function (x) { return m.l + (x - o.xmin) / (o.xmax - o.xmin) * (W - m.l - m.r); };
+    var sy = function (y) { return H - m.b - (y - o.ymin) / (o.ymax - o.ymin) * (H - m.t - m.b); };
+    var g = el("g", {}, svg);
+    o.yticks.forEach(function (v) {
+      el("line", { x1: m.l, x2: W - m.r, y1: sy(v), y2: sy(v), "class": "grid" }, g);
+      el("text", { x: m.l - 7, y: sy(v) + 4, "text-anchor": "end", "class": "tick" }, g).textContent = tickText(v);
+    });
+    o.xticks.forEach(function (v) {
+      el("line", { x1: sx(v), x2: sx(v), y1: H - m.b, y2: H - m.b + 4, "class": "axis" }, g);
+      el("text", { x: sx(v), y: H - m.b + 17, "text-anchor": "middle", "class": "tick" }, g).textContent = tickText(v);
+    });
+    var y0 = sy(Math.max(o.ymin, Math.min(o.ymax, 0)));
+    el("line", { x1: m.l, x2: W - m.r, y1: y0, y2: y0, "class": "axis" }, g);
+    el("line", { x1: m.l, x2: m.l, y1: m.t, y2: H - m.b, "class": "axis" }, g);
+    el("text", { x: (m.l + W - m.r) / 2, y: H - 6, "text-anchor": "middle", "class": "alabel" }, g).textContent = o.xlabel;
+    el("text", { x: 13, y: (m.t + H - m.b) / 2, "text-anchor": "middle", "class": "alabel",
+      transform: "rotate(-90 13 " + ((m.t + H - m.b) / 2) + ")" }, g).textContent = o.ylabel;
+    clipId += 1;
+    var id = "clip" + clipId;
+    var cp = el("clipPath", { id: id }, svg);
+    el("rect", { x: m.l, y: m.t, width: W - m.l - m.r, height: H - m.t - m.b }, cp);
+    var plot = el("g", { "clip-path": "url(#" + id + ")" }, svg);
+    return { sx: sx, sy: sy, plot: plot, svg: svg, m: m, W: W, H: H };
+  }
+  function pathOf(fn, a, b, n, F) {
+    var d = "";
+    for (var i = 0; i <= n; i++) {
+      var x = a + (b - a) * i / n, y = fn(x);
+      d += (i ? "L" : "M") + F.sx(x).toFixed(2) + " " + F.sy(y).toFixed(2);
+    }
+    return d;
+  }
+
+  /* ---------------- Tool 1 ---------------- */
+  var D = {
+    bernoulli: {
+      etaMin: -4, etaMax: 4, eta0: 1,
+      A: softplus, A1: sig, A2: function (e) { var s = sig(e); return s * (1 - s); },
+      param: function (e) { return "p = " + f(sig(e), 3); },
+      formula: "h(x) = 1, T(x) = x, η = ln(p / (1 − p)), A(η) = ln(1 + e<sup>η</sup>)",
+      discrete: true, xs: [0, 1], pmf: function (x, e) { return x === 1 ? sig(e) : 1 - sig(e); },
+      dist: { xmin: -0.6, xmax: 1.6, ymin: 0, ymax: 1.05, xticks: [0, 1], yticks: [0, 0.25, 0.5, 0.75, 1], xlabel: "x", ylabel: "f(x | η)" },
+      Ay: { ymin: -0.5, ymax: 4.6, yticks: [0, 1, 2, 3, 4] }, Ax: [-4, -2, 0, 2, 4]
+    },
+    poisson: {
+      etaMin: -1, etaMax: 2.5, eta0: 1,
+      A: Math.exp, A1: Math.exp, A2: Math.exp,
+      param: function (e) { return "λ = " + f(Math.exp(e), 3); },
+      formula: "h(x) = 1/x!, T(x) = x, η = ln λ, A(η) = e<sup>η</sup>",
+      discrete: true, xs: (function () { var a = []; for (var i = 0; i <= 25; i++) a.push(i); return a; })(),
+      pmf: function (x, e) { var l = Math.exp(e), p = Math.exp(-l); for (var i = 1; i <= x; i++) p *= l / i; return p; },
+      dist: { xmin: -0.8, xmax: 25.8, ymin: 0, ymax: 0.75, xticks: [0, 5, 10, 15, 20, 25], yticks: [0, 0.25, 0.5, 0.75], xlabel: "x (count)", ylabel: "f(x | η)" },
+      Ay: { ymin: -1, ymax: 13, yticks: [0, 4, 8, 12] }, Ax: [-1, 0, 1, 2]
+    },
+    normal: {
+      etaMin: -3, etaMax: 3, eta0: 1,
+      A: function (e) { return e * e / 2; }, A1: function (e) { return e; }, A2: function () { return 1; },
+      param: function (e) { return "μ = " + f(e, 3); },
+      formula: "h(x) = e<sup>−x²/2</sup>/√(2π), T(x) = x, η = μ, A(η) = η²/2",
+      discrete: false, pdf: function (x, e) { return Math.exp(-(x - e) * (x - e) / 2) / Math.sqrt(2 * Math.PI); },
+      dist: { xmin: -6.5, xmax: 6.5, ymin: 0, ymax: 0.45, xticks: [-6, -3, 0, 3, 6], yticks: [0, 0.1, 0.2, 0.3, 0.4], xlabel: "x", ylabel: "f(x | η)" },
+      Ay: { ymin: -1, ymax: 5, yticks: [0, 1, 2, 3, 4, 5] }, Ax: [-3, -2, -1, 0, 1, 2, 3]
+    }
+  };
+  var cur = "bernoulli";
+  var etaInput = document.getElementById("eta");
+
+  function moments(d, e) {
+    var mean = 0, v = 0, i;
+    if (d.discrete) {
+      var N = cur === "poisson" ? 120 : 1;
+      var ps = [];
+      for (i = 0; i <= N; i++) ps.push(d.pmf(i, e));
+      for (i = 0; i <= N; i++) mean += i * ps[i];
+      for (i = 0; i <= N; i++) v += (i - mean) * (i - mean) * ps[i];
+    } else {
+      var a = e - 12, b = e + 12, n = 4000, h = (b - a) / n, s0 = 0, s1 = 0;
+      for (i = 0; i <= n; i++) {
+        var x = a + i * h, w = (i === 0 || i === n) ? 1 : (i % 2 ? 4 : 2), p = d.pdf(x, e);
+        s0 += w * x * p;
+      }
+      mean = s0 * h / 3;
+      for (i = 0; i <= n; i++) {
+        var x2 = a + i * h, w2 = (i === 0 || i === n) ? 1 : (i % 2 ? 4 : 2);
+        s1 += w2 * (x2 - mean) * (x2 - mean) * d.pdf(x2, e);
+      }
+      v = s1 * h / 3;
+    }
+    return { mean: mean, v: v };
+  }
+
+  function drawMean() {
+    var d = D[cur], e = parseFloat(etaInput.value);
+    document.getElementById("eta-val").textContent = "η = " + f(e, 2);
+    document.getElementById("param-val").textContent = d.param(e);
+    document.getElementById("formula").innerHTML = "f(x | η) = h(x) exp{η T(x) − A(η)}, " + d.formula;
+    var mo = moments(d, e);
+
+    /* distribution chart */
+    var F = frame(document.getElementById("chart-dist"), d.dist);
+    if (d.discrete) {
+      var bw = cur === "poisson" ? 0.7 : 0.45;
+      d.xs.forEach(function (x) {
+        var p = d.pmf(x, e), x0 = F.sx(x - bw / 2), x1 = F.sx(x + bw / 2), yTop = F.sy(p), yBase = F.sy(0);
+        el("rect", { x: x0, y: yTop, width: Math.max(0, x1 - x0), height: Math.max(0, yBase - yTop), "class": "bar" }, F.plot);
+      });
+    } else {
+      var area = pathOf(function (x) { return d.pdf(x, e); }, d.dist.xmin, d.dist.xmax, 240, F);
+      el("path", { d: area + "L" + F.sx(d.dist.xmax) + " " + F.sy(0) + "L" + F.sx(d.dist.xmin) + " " + F.sy(0) + "Z", "class": "area" }, F.plot);
+      el("path", { d: area, "class": "curve" }, F.plot);
+    }
+    var mx = F.sx(mo.mean);
+    el("line", { x1: mx, x2: mx, y1: F.sy(d.dist.ymin), y2: F.sy(d.dist.ymax * 0.88), "class": "meanline" }, F.plot);
+    var anchor = mo.mean > (d.dist.xmin + d.dist.xmax) / 2 ? "end" : "start";
+    el("text", { x: mx + (anchor === "end" ? -6 : 6), y: F.sy(d.dist.ymax * 0.86), "text-anchor": anchor, "class": "note2" }, F.plot).textContent = "mean = " + f(mo.mean, 3);
+
+    /* A(eta) chart */
+    var o = { xmin: d.etaMin, xmax: d.etaMax, ymin: d.Ay.ymin, ymax: d.Ay.ymax, xticks: d.Ax, yticks: d.Ay.yticks, xlabel: "η", ylabel: "A(η)" };
+    var G = frame(document.getElementById("chart-A"), o);
+    el("path", { d: pathOf(d.A, d.etaMin, d.etaMax, 240, G), "class": "curve" }, G.plot);
+    var A0 = d.A(e), s = d.A1(e);
+    el("path", { d: pathOf(function (t) { return A0 + s * (t - e); }, d.etaMin, d.etaMax, 2, G), "class": "tangent" }, G.plot);
+    el("circle", { cx: G.sx(e), cy: G.sy(A0), r: 5, "class": "dot" }, G.plot);
+    el("text", { x: G.m.l + 10, y: G.m.t + 18, "class": "note" }, G.plot).textContent = "slope of tangent = A′(η) = " + f(s, 3);
+
+    document.getElementById("r-a1").innerHTML = "A′(η) = " + f(d.A1(e), 4);
+    document.getElementById("r-mean").innerHTML = "E[X] = " + f(mo.mean, 4) + " <span class=\"match\">✓</span>";
+    document.getElementById("r-a2").innerHTML = "A″(η) = " + f(d.A2(e), 4);
+    document.getElementById("r-var").innerHTML = "Var(X) = " + f(mo.v, 4) + " <span class=\"match\">✓</span>";
+  }
+
+  function setDist(name) {
+    cur = name;
+    var d = D[name];
+    etaInput.min = d.etaMin; etaInput.max = d.etaMax; etaInput.value = d.eta0;
+    ["bernoulli", "poisson", "normal"].forEach(function (k) {
+      document.getElementById("d-" + k).setAttribute("aria-pressed", String(k === name));
+    });
+    drawMean();
+  }
+  ["bernoulli", "poisson", "normal"].forEach(function (k) {
+    document.getElementById("d-" + k).addEventListener("click", function () { setDist(k); });
+  });
+  etaInput.addEventListener("input", drawMean);
+
+  /* ---------------- Tool 2 ---------------- */
+  var y = 1;
+  var scoreInput = document.getElementById("score");
+  var STEPS = 40, ALPHA = 1;
+  var trainTimer = null;
+
+  function corrections(eta) {
+    var p = sig(eta);
+    return { p: p, ce: Math.abs(p - y), se: Math.abs((p - y) * p * (1 - p)) };
+  }
+  function trajectory(eta0, useCE) {
+    var e = eta0, out = [sig(e)];
+    for (var i = 0; i < STEPS; i++) {
+      var p = sig(e);
+      var g = useCE ? (p - y) : (p - y) * p * (1 - p);
+      e = e - ALPHA * g;
+      out.push(sig(e));
+    }
+    return out;
+  }
+  function drawTrain(upTo) {
+    var eta0 = parseFloat(scoreInput.value);
+    var o = { xmin: 0, xmax: STEPS, ymin: 0, ymax: 1.05, xticks: [0, 10, 20, 30, 40], yticks: [0, 0.25, 0.5, 0.75, 1], xlabel: "gradient-descent step", ylabel: "P(spam)" };
+    var F = frame(document.getElementById("chart-train"), o);
+    el("line", { x1: F.sx(0), x2: F.sx(STEPS), y1: F.sy(y), y2: F.sy(y), "class": "target" }, F.plot);
+    el("text", { x: F.sx(STEPS) - 4, y: F.sy(y) + (y === 1 ? 14 : -6), "text-anchor": "end", "class": "tick" }, F.plot).textContent = "true answer y = " + y;
+    var ce = trajectory(eta0, true), se = trajectory(eta0, false);
+    var n = Math.min(upTo, STEPS);
+    function poly(arr, cls) {
+      var d = "";
+      for (var i = 0; i <= n; i++) d += (i ? "L" : "M") + F.sx(i).toFixed(2) + " " + F.sy(arr[i]).toFixed(2);
+      el("path", { d: d, "class": cls }, F.plot);
+    }
+    poly(ce, "ce"); poly(se, "se");
+    document.getElementById("train-val").textContent = "After " + n + " steps: cross-entropy P(spam) = " + f(ce[n], 3) + ",  squared error P(spam) = " + f(se[n], 3);
+  }
+  function drawLoss() {
+    var eta = parseFloat(scoreInput.value), c = corrections(eta);
+    document.getElementById("score-val").textContent = "η = " + f(eta, 2);
+    document.getElementById("yhat-val").textContent = "P(spam) = ŷ = " + f(c.p, 3);
+    document.getElementById("bar-ce").style.width = (100 * c.ce) + "%";
+    document.getElementById("bar-se").style.width = (100 * c.se) + "%";
+    document.getElementById("v-ce").textContent = f(c.ce, 4);
+    document.getElementById("v-se").textContent = f(c.se, 4);
+
+    var o = { xmin: -6, xmax: 6, ymin: 0, ymax: 1.05, xticks: [-6, -4, -2, 0, 2, 4, 6], yticks: [0, 0.25, 0.5, 0.75, 1], xlabel: "score η", ylabel: "size of correction" };
+    var F = frame(document.getElementById("chart-grad"), o);
+    el("path", { d: pathOf(function (t) { return corrections(t).ce; }, -6, 6, 240, F), "class": "ce" }, F.plot);
+    el("path", { d: pathOf(function (t) { return corrections(t).se; }, -6, 6, 240, F), "class": "se" }, F.plot);
+    el("line", { x1: F.sx(eta), x2: F.sx(eta), y1: F.sy(0), y2: F.sy(1.05), "class": "cursor" }, F.plot);
+    el("circle", { cx: F.sx(eta), cy: F.sy(c.ce), r: 5, "class": "dot" }, F.plot);
+    el("circle", { cx: F.sx(eta), cy: F.sy(c.se), r: 5, "class": "dot", style: "fill: var(--ochre)" }, F.plot);
+    var wrong = (y === 1 && eta < 0) || (y === 0 && eta > 0);
+    el("text", { x: y === 1 ? F.sx(-5.8) : F.sx(5.8), y: F.sy(0.6), "text-anchor": y === 1 ? "start" : "end", "class": "tick" }, F.plot).textContent = "confidently wrong";
+    if (!wrong) { /* nothing extra */ }
+    stopTrain();
+    drawTrain(STEPS);
+  }
+  function stopTrain() { if (trainTimer) { clearInterval(trainTimer); trainTimer = null; } }
+  document.getElementById("train").addEventListener("click", function () {
+    stopTrain();
+    var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce) { drawTrain(STEPS); return; }
+    var k = 0;
+    drawTrain(0);
+    trainTimer = setInterval(function () {
+      k += 1; drawTrain(k);
+      if (k >= STEPS) stopTrain();
+    }, 70);
+  });
+  ["1", "0"].forEach(function (v) {
+    document.getElementById("y-" + v).addEventListener("click", function () {
+      y = parseInt(v, 10);
+      document.getElementById("y-1").setAttribute("aria-pressed", String(y === 1));
+      document.getElementById("y-0").setAttribute("aria-pressed", String(y === 0));
+      scoreInput.value = y === 1 ? -4 : 4;
+      drawLoss();
+    });
+  });
+  scoreInput.addEventListener("input", drawLoss);
+
+  /* ---------------- Tabs ---------------- */
+  function showTab(which) {
+    var mean = which !== "loss";
+    document.getElementById("tab-mean").setAttribute("aria-selected", String(mean));
+    document.getElementById("tab-loss").setAttribute("aria-selected", String(!mean));
+    document.getElementById("panel-mean").hidden = !mean;
+    document.getElementById("panel-loss").hidden = mean;
+  }
+  document.getElementById("tab-mean").addEventListener("click", function () { showTab("mean"); });
+  document.getElementById("tab-loss").addEventListener("click", function () { showTab("loss"); });
+
+  setDist("bernoulli");
+  drawLoss();
+  showTab(location.hash === "#loss" ? "loss" : "mean");
+})();
+</script>
+
+</body>
+</html>
