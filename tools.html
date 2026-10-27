@@ -26,15 +26,58 @@
 
 <main>
   <h1>Teaching Tools</h1>
-  <p class="subtitle">Interactive tools for my courses and lecture notes. Access requires a
-  password shared in class.</p>
 
-  <ul class="entries">
-    <li><strong><a href="tools/expfam-explorer.html">Exponential Family Explorer</a></strong></li>
-  </ul>
+  <div id="gate">
+    <form id="gate-form" style="display: grid; gap: 12px; max-width: 320px; margin-top: 1rem;">
+      <label for="gate-pw">Enter the password to view this page.</label>
+      <input type="password" id="gate-pw" autocomplete="off"
+             style="font: inherit; padding: 8px 10px; border: 1px solid var(--border); border-radius: 6px; background: var(--bg); color: var(--text);">
+      <button type="submit" class="btn">Enter</button>
+      <p id="gate-err" hidden style="margin: 0; color: #b4232a;">Incorrect password.</p>
+    </form>
+  </div>
+
+  <div id="tool-list" hidden>
+    <ul class="entries">
+      <li><strong><a href="tools/expfam-explorer.html">Exponential Family Explorer</a></strong></li>
+    </ul>
+  </div>
 
   <p class="see-all"><a href="teaching.html">← Back to Teaching</a></p>
 </main>
+
+<script>
+(function () {
+  "use strict";
+  var HASH = "524beeec873cb78924f03e60f2b9a7313873df5881f0654eaead2d581336e643";
+  var gate = document.getElementById("gate");
+  var list = document.getElementById("tool-list");
+  function unlock() { gate.hidden = true; list.hidden = false; }
+  try {
+    if (sessionStorage.getItem("tools-unlocked") === "1") { unlock(); return; }
+  } catch (e) {}
+  function check(pw) {
+    return crypto.subtle.digest("SHA-256", new TextEncoder().encode(pw)).then(function (buf) {
+      var hex = Array.prototype.map.call(new Uint8Array(buf), function (b) {
+        return b.toString(16).padStart(2, "0");
+      }).join("");
+      return hex === HASH;
+    });
+  }
+  document.getElementById("gate-form").addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    check(document.getElementById("gate-pw").value).then(function (ok) {
+      if (ok) {
+        try { sessionStorage.setItem("tools-unlocked", "1"); } catch (e) {}
+        unlock();
+      } else {
+        document.getElementById("gate-err").hidden = false;
+        document.getElementById("gate-pw").select();
+      }
+    });
+  });
+})();
+</script>
 
 <footer>
   <div class="footer-inner">
